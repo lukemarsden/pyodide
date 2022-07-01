@@ -5,7 +5,7 @@ async function main() {
 
     var argv = require('yargs/yargs')(process.argv.slice(2)).argv;
 
-    const programPath = null;
+    let programPath = null;
     if (argv._.length == 1) {
         programPath = argv._[0];
     }
@@ -20,7 +20,7 @@ async function main() {
         process.exit(1);
     }
 
-    var program = "";
+    let program = "";
     if (programPath !== null) {
         // read contents of file programPath
         program = await fs.promises.readFile(programPath, 'utf8');
