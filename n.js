@@ -1,9 +1,12 @@
+const fs = require('fs')
+const yargs = require('yargs/yargs')
+
 async function main() {
 
     // parse commandline argument -c
     // set filename to first commandline argument
 
-    var argv = require('yargs/yargs')(process.argv.slice(2)).argv;
+    var argv = yargs(process.argv.slice(2)).argv;
 
     let programPath = null;
     if (argv._.length == 1) {
