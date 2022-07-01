@@ -7,7 +7,7 @@ async function main() {
 
     const programPath = null;
     if (argv._.length == 1) {
-        const programPath = argv._[0];
+        programPath = argv._[0];
     }
 
     if (programPath === null && !("c" in argv)) {
