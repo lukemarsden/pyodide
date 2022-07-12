@@ -68,6 +68,10 @@ async function main() {
       },
     });
     // await pyodide.loadPackage("micropip");
+   
+    // log any errors with fs setup
+    LOGGING_ON = true;
+    process.stdout.write = oldStdoutWrite;
 
     jobSpec.inputs.forEach(inputVolume => {
       const hostPath = inputVolume.path
@@ -83,9 +87,6 @@ async function main() {
       pyodide.FS.mount(pyodide.FS.filesystems.IDBFS, { root: hostPath }, wasmPath);
     })
   
-
-    LOGGING_ON = true;
-    process.stdout.write = oldStdoutWrite;
     await pyodide.runPythonAsync(program);
 
     // TODO: support requirements
