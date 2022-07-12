@@ -14,12 +14,12 @@ async function main() {
     }
 
     if (programPath === null && !("c" in argv)) {
-        console.log("Must specify a program: 'n.js python.py', or an inline command: 'n.js -c \"print(1+1)\"'")
+        console.error("Must specify a program: 'n.js python.py', or an inline command: 'n.js -c \"print(1+1)\"'")
         process.exit(1);
     }
     
     if (programPath !== null && ("c" in argv)) {
-        console.log("Can't specify both program path and inline command")
+        console.error("Can't specify both program path and inline command")
         process.exit(1);
     }
 
@@ -31,6 +31,20 @@ async function main() {
 
     if ("c" in argv) {
         program = argv.c;
+    }
+
+    if (process.env.BACALHAU_JOB_SPEC == "") {
+      console.error("Must specify a BACALHAU_JOB_SPEC environment variable")
+      process.exit(1);
+    }
+
+    let jobSpec
+
+    try {
+      jobSpec = JSON.parse(process.env.BACALHAU_JOB_SPEC)
+    } catch(e) {
+      console.error("Error processing BACALHAU_JOB_SPEC json: " + e.toString())
+      process.exit(1);
     }
 
     // set system stdout to dev null
@@ -54,6 +68,21 @@ async function main() {
       },
     });
     // await pyodide.loadPackage("micropip");
+
+    jobSpec.inputs.forEach(inputVolume => {
+      const hostPath = inputVolume.path
+      const wasmPath = inputVolume.path.replace('/pyodide_inputs', '')
+      pyodide.FS.mkdir(wasmPath);
+      pyodide.FS.mount(pyodide.FS.filesystems.IDBFS, { root: hostPath }, wasmPath);
+    })
+
+    jobSpec.outputs.forEach(outputVolume => {
+      const hostPath = outputVolume.path
+      const wasmPath = outputVolume.path.replace('/pyodide_outputs', '')
+      pyodide.FS.mkdir(wasmPath);
+      pyodide.FS.mount(pyodide.FS.filesystems.IDBFS, { root: hostPath }, wasmPath);
+    })
+  
 
     LOGGING_ON = true;
     process.stdout.write = oldStdoutWrite;
