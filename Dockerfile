@@ -1,3 +1,4 @@
+# FROM pyodide/pyodide-env:20220525-py310-chrome102-firefox100
 FROM pyodide/pyodide-env:20220629-py310-chrome102-firefox100
 RUN mkdir /app
 ADD pyodide /app/pyodide
