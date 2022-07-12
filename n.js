@@ -77,14 +77,14 @@ async function main() {
       const hostPath = inputVolume.path
       const wasmPath = inputVolume.path.replace('/pyodide_inputs', '')
       pyodide.FS.mkdir(wasmPath);
-      pyodide.FS.mount(pyodide.FS.filesystems.IDBFS, { root: hostPath }, wasmPath);
+      pyodide.FS.mount(pyodide.FS.filesystems.NODEFS, { root: hostPath }, wasmPath);
     })
 
     jobSpec.outputs.forEach(outputVolume => {
       const hostPath = outputVolume.path
       const wasmPath = outputVolume.path.replace('/pyodide_outputs', '')
       pyodide.FS.mkdir(wasmPath);
-      pyodide.FS.mount(pyodide.FS.filesystems.IDBFS, { root: hostPath }, wasmPath);
+      pyodide.FS.mount(pyodide.FS.filesystems.NODEFS, { root: hostPath }, wasmPath);
     })
   
     await pyodide.runPythonAsync(program);
