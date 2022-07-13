@@ -77,7 +77,7 @@ async function main() {
     jobSpec.inputs.forEach(inputVolume => {
       const hostPath = inputVolume.path
       const wasmPath = inputVolume.path.replace('/pyodide_inputs', '')
-      if (!pyodide.FS.exists(wasmPath)) {
+      if (!fs.existsSync(wasmPath)) {
         console.log(`mkdir ${wasmPath}`);
         pyodide.FS.mkdir(wasmPath);
       }
@@ -90,7 +90,7 @@ async function main() {
     jobSpec.outputs.forEach(outputVolume => {
       const hostPath = outputVolume.path
       const wasmPath = outputVolume.path.replace('/pyodide_outputs', '')
-      if (!pyodide.FS.exists(wasmPath)) {
+      if (!fs.existsSync(wasmPath)) {
         console.log(`mkdir ${wasmPath}`);
         pyodide.FS.mkdir(wasmPath);
       }
