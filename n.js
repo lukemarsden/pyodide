@@ -73,32 +73,32 @@ async function main() {
     LOGGING_ON = true;
     process.stdout.write = oldStdoutWrite;
 
-    console.log("job spec = ", JSON.stringify(jobSpec))
-    console.log("about to mount input volumes")
+    // console.log("job spec = ", JSON.stringify(jobSpec))
+    // console.log("about to mount input volumes")
     jobSpec.inputs.forEach(inputVolume => {
       const hostPath = inputVolume.path
       const wasmPath = inputVolume.path.replace('/pyodide_inputs', '')
       if (!fs.existsSync(wasmPath)) {
-        console.log(`mkdir ${wasmPath}`);
+        // console.log(`mkdir ${wasmPath}`);
         pyodide.FS.mkdir(wasmPath);
       }
-      console.log(`mounting ${hostPath} to ${wasmPath}`)
+      // console.log(`mounting ${hostPath} to ${wasmPath}`)
       pyodide.FS.mount(pyodide.FS.filesystems.NODEFS, { root: hostPath }, wasmPath);
     })
-    console.log("done mounting input volumes")
+    // console.log("done mounting input volumes")
 
-    console.log("about to mount output volumes")
+    // console.log("about to mount output volumes")
     jobSpec.outputs.forEach(outputVolume => {
       const hostPath = outputVolume.path
       const wasmPath = outputVolume.path.replace('/pyodide_outputs', '')
       if (!fs.existsSync(wasmPath)) {
-        console.log(`mkdir ${wasmPath}`);
+        // console.log(`mkdir ${wasmPath}`);
         pyodide.FS.mkdir(wasmPath);
       }
-      console.log(`mounting ${hostPath} to ${wasmPath}`)
+      // console.log(`mounting ${hostPath} to ${wasmPath}`)
       pyodide.FS.mount(pyodide.FS.filesystems.NODEFS, { root: hostPath }, wasmPath);
     })
-    console.log("done mounting input volumes")
+    // console.log("done mounting input volumes")
   
     await pyodide.runPythonAsync(program);
 
