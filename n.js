@@ -77,7 +77,10 @@ async function main() {
     jobSpec.inputs.forEach(inputVolume => {
       const hostPath = inputVolume.path
       const wasmPath = inputVolume.path.replace('/pyodide_inputs', '')
-      pyodide.FS.mkdir(wasmPath);
+      if (!pyodide.FS.exists(wasmPath)) {
+        console.log(`mkdir ${wasmPath}`);
+        pyodide.FS.mkdir(wasmPath);
+      }
       console.log(`mounting ${hostPath} to ${wasmPath}`)
       pyodide.FS.mount(pyodide.FS.filesystems.NODEFS, { root: hostPath }, wasmPath);
     })
@@ -87,7 +90,10 @@ async function main() {
     jobSpec.outputs.forEach(outputVolume => {
       const hostPath = outputVolume.path
       const wasmPath = outputVolume.path.replace('/pyodide_outputs', '')
-      pyodide.FS.mkdir(wasmPath);
+      if (!pyodide.FS.exists(wasmPath)) {
+        console.log(`mkdir ${wasmPath}`);
+        pyodide.FS.mkdir(wasmPath);
+      }
       console.log(`mounting ${hostPath} to ${wasmPath}`)
       pyodide.FS.mount(pyodide.FS.filesystems.NODEFS, { root: hostPath }, wasmPath);
     })
