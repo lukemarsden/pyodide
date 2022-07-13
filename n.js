@@ -73,6 +73,7 @@ async function main() {
     LOGGING_ON = true;
     process.stdout.write = oldStdoutWrite;
 
+    console.log("job spec = ", JSON.stringify(jobSpec))
     console.log("about to mount input volumes")
     jobSpec.inputs.forEach(inputVolume => {
       const hostPath = inputVolume.path
