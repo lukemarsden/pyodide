@@ -17,7 +17,7 @@ async function main() {
         console.error("Must specify a program: 'n.js python.py', or an inline command: 'n.js -c \"print(1+1)\"'")
         process.exit(1);
     }
-    
+
     if (programPath !== null && ("c" in argv)) {
         console.error("Can't specify both program path and inline command")
         process.exit(1);
@@ -68,38 +68,42 @@ async function main() {
       },
     });
     // await pyodide.loadPackage("micropip");
-   
+
     // log any errors with fs setup
     LOGGING_ON = true;
     process.stdout.write = oldStdoutWrite;
 
-    // console.log("job spec = ", JSON.stringify(jobSpec))
-    // console.log("about to mount input volumes")
-    jobSpec.inputs.forEach(inputVolume => {
-      const hostPath = inputVolume.path
-      const wasmPath = inputVolume.path.replace('/pyodide_inputs', '')
-      if (!fs.existsSync(wasmPath)) {
-        // console.log(`mkdir ${wasmPath}`);
-        pyodide.FS.mkdir(wasmPath);
-      }
-      // console.log(`mounting ${hostPath} to ${wasmPath}`)
-      pyodide.FS.mount(pyodide.FS.filesystems.NODEFS, { root: hostPath }, wasmPath);
-    })
-    // console.log("done mounting input volumes")
+    if (Array.isArray(jobSpec.inputs)) {
+        // console.log("job spec = ", JSON.stringify(jobSpec))
+        // console.log("about to mount input volumes")
+        jobSpec.inputs.forEach(inputVolume => {
+            const hostPath = inputVolume.path
+            const wasmPath = inputVolume.path.replace('/pyodide_inputs', '')
+            if (!fs.existsSync(wasmPath)) {
+                // console.log(`mkdir ${wasmPath}`);
+                pyodide.FS.mkdir(wasmPath);
+            }
+            // console.log(`mounting ${hostPath} to ${wasmPath}`)
+            pyodide.FS.mount(pyodide.FS.filesystems.NODEFS, { root: hostPath }, wasmPath);
+        })
+        // console.log("done mounting input volumes")
+    }
 
-    // console.log("about to mount output volumes")
-    jobSpec.outputs.forEach(outputVolume => {
-      const hostPath = outputVolume.path
-      const wasmPath = outputVolume.path.replace('/pyodide_outputs', '')
-      if (!fs.existsSync(wasmPath)) {
-        // console.log(`mkdir ${wasmPath}`);
-        pyodide.FS.mkdir(wasmPath);
-      }
-      // console.log(`mounting ${hostPath} to ${wasmPath}`)
-      pyodide.FS.mount(pyodide.FS.filesystems.NODEFS, { root: hostPath }, wasmPath);
-    })
-    // console.log("done mounting input volumes")
-  
+    if (Array.isArray(jobSpec.outputs)) {
+        // console.log("about to mount output volumes")
+        jobSpec.outputs.forEach(outputVolume => {
+            const hostPath = outputVolume.path
+            const wasmPath = outputVolume.path.replace('/pyodide_outputs', '')
+            if (!fs.existsSync(wasmPath)) {
+                // console.log(`mkdir ${wasmPath}`);
+                pyodide.FS.mkdir(wasmPath);
+            }
+            // console.log(`mounting ${hostPath} to ${wasmPath}`)
+            pyodide.FS.mount(pyodide.FS.filesystems.NODEFS, { root: hostPath }, wasmPath);
+        })
+        // console.log("done mounting input volumes")
+    }
+
     await pyodide.runPythonAsync(program);
 
     // TODO: support requirements
